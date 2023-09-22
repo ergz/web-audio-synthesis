@@ -23,18 +23,28 @@ window.onload = function () {
   document.body.appendChild(circleCanvas);
 
   var r = 50;
+  var x = 100;
+  var y = 500;
+  let ysign = 1;
+  let xsign = 1;
 
   // draw the circle moving around the screen
-  function draw() {}
+  function draw() {
+    circlectx.clearRect(0, 0, circleCanvas.width, circleCanvas.height);
+    x += 10 * xsign;
+    y += 10 * ysign;
 
-  circleCanvas.addEventListener("mousemove", function (event) {
-    var x = event.clientX - circleCanvas.getBoundingClientRect().left;
-    var y = event.clientY - circleCanvas.getBoundingClientRect().top;
+    if (y + r > bgCanvas.getBoundingClientRect().bottom) {
+      ysign = -1;
+    } else if (y - r < bgCanvas.getBoundingClientRect().top) {
+      ysign = 1;
+    }
 
-    var screenCenter =
-      (circleCanvas.getBoundingClientRect().right -
-        circleCanvas.getBoundingClientRect().left) /
-      2;
+    if (x + r > bgCanvas.getBoundingClientRect().right) {
+      xsign = -1;
+    } else if (x - r < bgCanvas.getBoundingClientRect().left) {
+      xsign = 1;
+    }
 
     let rval = mapToRange(
       x,
@@ -53,8 +63,6 @@ window.onload = function () {
       [50, 200]
     );
 
-    circlectx.clearRect(0, 0, circleCanvas.width, circleCanvas.height);
-
     circlectx.beginPath();
     circlectx.arc(x, y, r, 0, 2 * Math.PI, false);
     let color = "rgb(" + rval + "," + gval + "," + bval;
@@ -63,7 +71,14 @@ window.onload = function () {
     circlectx.lineWidth = 5;
     circlectx.strokeStyle = "white";
     circlectx.stroke();
-  });
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    draw();
+  }
+
+  animate();
 
   bgCanvas.style.position = "absolute";
   circleCanvas.style.position = "absolute";
